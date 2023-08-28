@@ -1,0 +1,45 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+// Define a structure for a singly linked list node
+struct Node {
+    int data;
+    struct Node* next;
+};
+
+// Function to insert a new node at the beginning of the linked list
+void insert(struct Node** head, int data) {
+    struct Node* newNode = (struct Node*)malloc(sizeof(struct Node));
+    newNode->data = data;
+    newNode->next = *head;
+    *head = newNode;
+}
+
+// Function to print the nodes of the linked list in reverse order
+void printReverse(struct Node* head) {
+    if (head == NULL) {
+        return; // Base case: empty list
+    }
+
+    // Recursively call the function for the next node
+    printReverse(head->next);
+
+    // Print the data of the current node after all nodes in front of it have been printed
+    printf("%d -> ", head->data);
+}
+
+int main() {
+    struct Node* head = NULL; // Initialize an empty linked list
+
+    // Insert some elements into the linked list
+    insert(&head, 5);
+    insert(&head, 4);
+    insert(&head, 3);
+    insert(&head, 2);
+    insert(&head, 1);
+
+    printf("Linked list in reverse order: ");
+    printReverse(head);
+
+    return 0;
+}
