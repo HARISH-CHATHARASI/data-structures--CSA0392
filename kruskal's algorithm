@@ -1,0 +1,98 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
+
+#define MAX_EDGES 20
+struct Edge {
+    int src, dest, weight;
+};
+struct Graph {
+    int V, E; 
+    struct Edge* edges[MAX_EDGES]; 
+};
+struct Graph* createGraph(int V, int E) {
+    struct Graph* graph = (struct Graph*)malloc(sizeof(struct Graph));
+    graph->V = V;
+    graph->E = E;
+
+    for (int i = 0; i < E; i++) {
+        graph->edges[i] = (struct Edge*)malloc(sizeof(struct Edge));
+    }
+
+    return graph;
+}
+
+int compareEdges(const void* a, const void* b) {
+    return ((struct Edge*)a)->weight - ((struct Edge*)b)->weight;
+}
+
+int find(int parent[], int i) {
+    if (parent[i] == -1)
+        return i;
+    return find(parent, parent[i]);
+}
+
+void unionSets(int parent[], int x, int y) {
+    int xSet = find(parent, x);
+    int ySet = find(parent, y);
+    parent[xSet] = ySet;
+}
+
+void kruskalMST(struct Graph* graph) {
+    int V = graph->V;
+    struct Edge resultMST[V - 1]; 
+    int e = 0; 
+    int i = 0; 
+    qsort(graph->edges, graph->E, sizeof(graph->edges[0]), compareEdges);
+
+    int parent[V];
+    for (int v = 0; v < V; v++)
+        parent[v] = -1;
+
+    while (e < V - 1 && i < graph->E) {
+        struct Edge nextEdge = *graph->edges[i++];
+
+        int x = find(parent, nextEdge.src);
+        int y = find(parent, nextEdge.dest);
+
+        if (x != y) {
+            resultMST[e++] = nextEdge;
+            unionSets(parent, x, y);
+        }
+    }
+    printf("Edges in Minimum Spanning Tree:\n");
+    for (i = 0; i < e; ++i) {
+        printf("%d - %d : %d\n", resultMST[i].src, resultMST[i].dest, resultMST[i].weight);
+    }
+}
+
+int main() {
+    int V = 4; 
+    int E = 5; 
+    struct Graph* graph = createGraph(V, E);
+
+    graph->edges[0]->src = 0;
+    graph->edges[0]->dest = 1;
+    graph->edges[0]->weight = 10;
+
+    graph->edges[1]->src = 0;
+    graph->edges[1]->dest = 2;
+    graph->edges[1]->weight = 6;
+
+    graph->edges[2]->src = 0;
+    graph->edges[2]->dest = 3;
+    graph->edges[2]->weight = 5;
+
+    graph->edges[3]->src = 1;
+    graph->edges[3]->dest = 3;
+    graph->edges[3]->weight = 15;
+
+    graph->edges[4]->src = 2;
+    graph->edges[4]->dest = 3;
+    graph->edges[4]->weight = 4;
+
+    kruskalMST(graph);
+
+    return 0;
+}
+
