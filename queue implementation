@@ -1,0 +1,83 @@
+#include <stdio.h>
+#include <stdlib.h>
+
+#define MAX_SIZE 100
+
+// Define the queue structure
+struct Queue {
+    int items[MAX_SIZE];
+    int front;
+    int rear;
+};
+
+// Initialize the queue
+void initialize(struct Queue *q) {
+    q->front = -1;
+    q->rear = -1;
+}
+
+// Check if the queue is empty
+int isEmpty(struct Queue *q) {
+    return (q->front == -1 && q->rear == -1);
+}
+
+// Check if the queue is full
+int isFull(struct Queue *q) {
+    return (q->rear == MAX_SIZE - 1);
+}
+
+// Add an element to the rear of the queue
+void enqueue(struct Queue *q, int value) {
+    if (isFull(q)) {
+        printf("Queue is full. Cannot enqueue.\n");
+        return;
+    }
+    if (isEmpty(q)) {
+        q->front = q->rear = 0;
+    } else {
+        q->rear++;
+    }
+    q->items[q->rear] = value;
+}
+
+// Remove an element from the front of the queue
+int dequeue(struct Queue *q) {
+    int removedItem;
+    if (isEmpty(q)) {
+        printf("Queue is empty. Cannot dequeue.\n");
+        return -1; // Return a sentinel value
+    }
+    removedItem = q->items[q->front];
+    if (q->front == q->rear) {
+        // Queue has only one element, reset the queue
+        q->front = q->rear = -1;
+    } else {
+        q->front++;
+    }
+    return removedItem;
+}
+
+int main() {
+    struct Queue q;
+    initialize(&q);
+
+    // Enqueue some elements
+    enqueue(&q, 1);
+    enqueue(&q, 2);
+    enqueue(&q, 3);
+
+    // Dequeue and print elements
+    printf("Dequeued: %d\n", dequeue(&q));
+    printf("Dequeued: %d\n", dequeue(&q));
+
+    // Enqueue more elements
+    enqueue(&q, 4);
+    enqueue(&q, 5);
+
+    // Dequeue and print elements
+    printf("Dequeued: %d\n", dequeue(&q));
+    printf("Dequeued: %d\n", dequeue(&q));
+    printf("Dequeued: %d\n", dequeue(&q));
+
+    return 0;
+}
